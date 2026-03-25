@@ -1,7 +1,7 @@
 {
-  "name": "vi-notes",
+  "name": "soch",
   "version": "1.0.0",
-  "description": "Vi-Notes authenticity verification platform",
+  "description": "Soch authenticity verification platform",
   "main": "index.js",
   "scripts": {
     "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",

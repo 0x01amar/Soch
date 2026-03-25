@@ -1,8 +1,8 @@
-# Vi-Notes
+# Soch
 
-**Vi-Notes** is an authenticity verification platform designed to distinguish genuine human-written content from AI-generated or AI-assisted text. The system focuses on analyzing **writing behavior** alongside **statistical and linguistic characteristics** of the text to establish reliable authorship verification.
+**Soch** is an authenticity verification platform designed to distinguish genuine human-written content from AI-generated or AI-assisted text. The system focuses on analyzing **writing behavior** alongside **statistical and linguistic characteristics** of the text to establish reliable authorship verification.
 
-This repository represents the **design and conceptual foundation** for the Vi-Notes system.
+This repository represents the **design and conceptual foundation** for the Soch system.
 
 ---
 
@@ -10,7 +10,7 @@ This repository represents the **design and conceptual foundation** for the Vi-N
 
 With the widespread availability of AI writing tools, verifying true human authorship has become increasingly challenging. Most existing detection methods rely primarily on textual analysis, which can be inconsistent and easy to bypass.
 
-Vi-Notes approaches this problem by combining:
+Soch approaches this problem by combining:
 - Behavioral signals from the writing process
 - Statistical analysis of the written content
 - Correlation between how content is written and what is written
@@ -28,7 +28,7 @@ Human writing naturally includes:
 
 AI-generated or pasted text often lacks these behavioral signatures.
 
-Vi-Notes is designed to capture and analyze these characteristics to assess authorship authenticity.
+Soch is designed to capture and analyze these characteristics to assess authorship authenticity.
 
 ---
 
@@ -90,7 +90,7 @@ Vi-Notes is designed to capture and analyze these characteristics to assess auth
 
 ## Privacy & Ethics
 
-Vi-Notes is designed with privacy-first principles:
+Soch is designed with privacy-first principles:
 
 - No storage of raw keystroke content
 - Only timing, frequency, and structural metadata is collected

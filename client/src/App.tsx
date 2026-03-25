@@ -7,8 +7,8 @@ import { Moon, Sun, LogOut, LogIn, LayoutDashboard, Save, Trash2, LoaderCircle }
 import { hasValidAuthToken } from './api';
 import './App.css';
 
-const LOCAL_TITLE_KEY = 'vi-notes-document-title';
-const LOCAL_DRAFT_KEY = 'vi-notes-editor-draft';
+const LOCAL_TITLE_KEY = 'soch-document-title';
+const LOCAL_DRAFT_KEY = 'soch-editor-draft';
 
 interface EditorActions {
   save: () => void;
@@ -47,6 +47,7 @@ const ProtectedRoute = ({ children, onAuthRequired }: { children: React.ReactNod
 const AppShell = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const isHomePage = location.pathname === '/';
   const [isCompatibleScreen, setIsCompatibleScreen] = useState(() =>
     typeof window === 'undefined' ? true : window.innerWidth >= 768
   );
@@ -68,6 +69,12 @@ const AppShell = () => {
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
+    
+    // Update theme-color meta tag to match brand colors
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute('content', theme === 'dark' ? '#FF9933' : '#1a8a1a');
+    }
   }, [theme]);
 
   useEffect(() => {
@@ -211,12 +218,12 @@ const AppShell = () => {
       <div className="compatibility-screen">
         <div className="compatibility-card">
           <div className="doc-icon">
-            <img src="/logo.svg" alt="Vi-Notes" width="22" height="22" />
+            <img src="/logo.svg" alt="Soch" width="22" height="22" />
           </div>
           <h1>Screen Size Not Supported</h1>
           <p>
             This editor is designed for larger screens. A minimum width of 768 pixels is required
-            to use <span className="brand-font">Vi-Notes</span> reliably.
+            to use <span className="brand-font">Soch</span> reliably.
           </p>
           <p>
             Open the site on a tablet in landscape mode, laptop, or desktop browser to continue
@@ -234,16 +241,16 @@ const AppShell = () => {
           {isAuthenticated && isEditorRoute ? (
             <button type="button" className="brand-link brand-link-button" onClick={handleGoToDashboard}>
               <div className="doc-icon">
-                <img src="/logo.svg" alt="Vi-Notes" width="24" height="24" />
+                <img src="/logo.svg" alt="Soch" width="24" height="24" />
               </div>
-              <span className="brand-title brand-font">Vi-Notes</span>
+              <span className={`brand-title brand-font ${isHomePage ? 'brand-font-gothic' : ''}`}>Soch</span>
             </button>
           ) : (
             <Link to="/" className="brand-link">
               <div className="doc-icon">
-                <img src="/logo.svg" alt="Vi-Notes" width="24" height="24" />
+                <img src="/logo.svg" alt="Soch" width="24" height="24" />
               </div>
-              <span className="brand-title brand-font">Vi-Notes</span>
+              <span className={`brand-title brand-font ${isHomePage ? 'brand-font-gothic' : ''}`}>Soch</span>
             </Link>
           )}
 

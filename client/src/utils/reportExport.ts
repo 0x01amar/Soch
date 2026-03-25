@@ -64,7 +64,7 @@ export const downloadReportPdf = async ({ title, report }: DownloadReportPdfOpti
       <div style="position:absolute; inset:0; pointer-events:none; display:flex; align-items:center; justify-content:center;">
         <div style="transform:rotate(-24deg); text-align:center; opacity:0.08;">
           <div style="font-size:46px; font-weight:700; letter-spacing:0.28em; text-transform:uppercase; color:#15803d;">Verified by</div>
-          <div style="margin-top:10px; font-size:108px; line-height:1; font-family:'Satisfy', cursive; color:#b36b00;">Vi-Notes</div>
+          <div style="margin-top:10px; font-size:108px; line-height:1; font-family:'Satisfy', cursive; color:#b36b00;">Soch</div>
         </div>
       </div>
       <div style="position:relative; z-index:1; padding:16mm 16mm 12mm;">

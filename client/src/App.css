@@ -288,21 +288,37 @@ header {
 }
 
 .brand-font {
-  font-family: 'Satisfy', cursive;
-  color: var(--accent-color);
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--accent-color), #FF9933);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
+}
+
+.brand-font-gothic {
+  font-family: 'UnifrakturMaguntia', cursive !important;
+  font-weight: 700 !important;
+  font-size: 32px !important;
+  letter-spacing: 0.02em !important;
+  background: linear-gradient(135deg, var(--accent-color), #FF9933) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
 }
 
 .brand-title {
-  font-family: 'Satisfy', cursive;
-  font-size: 28px;
-  font-weight: 400;
-  color: var(--accent-color);
-  letter-spacing: 0.5px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  background: linear-gradient(135deg, var(--accent-color) 20%, #FF9933 80%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   display: flex;
   align-items: center;
   margin-left: 2px;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
 }
 
 .header-divider {
@@ -543,7 +559,7 @@ header {
   z-index: 5;
   position: relative;
   will-change: width;
-  transition: width 0.24s ease, box-shadow 0.24s ease;
+  transition: box-shadow 0.2s ease;
 }
 
 .sidebar.collapsed {
@@ -593,14 +609,11 @@ header {
 .sidebar-icon-transition {
   opacity: 1;
   transform: translateX(0) scale(1);
-  max-height: 44px;
   margin: 0;
-  overflow: hidden;
   transition:
     opacity 0.18s ease,
     transform 0.22s ease,
-    max-height 0.22s ease,
-    margin 0.22s ease,
+    margin 0.18s ease,
     border-color 0.2s ease,
     background 0.2s ease,
     color 0.2s ease;
@@ -609,7 +622,6 @@ header {
 .sidebar-icon-transition.is-hidden {
   opacity: 0;
   transform: translateX(8px) scale(0.92);
-  max-height: 0;
   margin: -4px 0;
   pointer-events: none;
 }

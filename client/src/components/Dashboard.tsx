@@ -46,7 +46,7 @@ const normalizeAnalysisResult = (analysis: AnalysisResult | null | undefined): A
   if (!analysis) return null;
   return {
     reportId: analysis.reportId || 'legacy-report',
-    verificationTag: analysis.verificationTag || 'Verified by Vi-Notes',
+    verificationTag: analysis.verificationTag || 'Verified by Soch',
     generatedAt: analysis.generatedAt || new Date().toISOString(),
     authenticityScore: analysis.authenticityScore ?? 0,
     typingSpeed: analysis.typingSpeed ?? 0,

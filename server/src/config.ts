@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const DEFAULT_PORT = 5000;
-const DEFAULT_MONGODB_URI = 'mongodb://localhost:27017/vi-notes';
+const DEFAULT_MONGODB_URI = 'mongodb://localhost:27017/soch';
 const DEFAULT_FRONTEND_URL = 'http://localhost:5173';
 const DEFAULT_JWT_SECRET = 'local-dev-secret-change-me';
 

@@ -100,7 +100,7 @@ const normalizeAnalysisResult = (analysis: AnalysisResult | null | undefined): A
   if (!analysis) return null;
   return {
     reportId: analysis.reportId || 'legacy-report',
-    verificationTag: analysis.verificationTag || 'Verified by Vi-Notes',
+    verificationTag: analysis.verificationTag || 'Verified by Soch',
     generatedAt: analysis.generatedAt || new Date().toISOString(),
     authenticityScore: analysis.authenticityScore ?? 0,
     typingSpeed: analysis.typingSpeed ?? 0,
@@ -360,8 +360,8 @@ const DEFAULT_COLORS = [
   '#5B0F00', '#660000', '#783F04', '#7F6000', '#274E13', '#0C343D', '#1C4587', '#073763', '#20124D', '#4C1130',
 ];
 
-const LOCAL_DRAFT_KEY = 'vi-notes-editor-draft';
-const LOCAL_PENDING_ANALYSIS_KEY = 'vi-notes-pending-analysis';
+const LOCAL_DRAFT_KEY = 'soch-editor-draft';
+const LOCAL_PENDING_ANALYSIS_KEY = 'soch-pending-analysis';
 
 const getDraftStorageKey = (documentId: string | null, isAuthenticated: boolean) =>
   isAuthenticated && documentId ? `${LOCAL_DRAFT_KEY}:${documentId}` : LOCAL_DRAFT_KEY;
@@ -637,11 +637,14 @@ const Editor: React.FC<EditorProps> = ({ docTitle, setDocTitle, isAuthenticated,
       for (let index = 0; index < pages.length; index += 1) {
         const page = pages[index];
         while (page.scrollHeight > page.clientHeight + 1) {
-          if (page.childNodes.length <= 1) break;
           const nextPage = pages[index + 1];
           if (!nextPage) {
             appendPageAfter(page);
             return;
+          }
+
+          if (page.childNodes.length <= 1) {
+            break;
           }
 
           const nodeToMove = page.lastChild;
@@ -902,6 +905,109 @@ const Editor: React.FC<EditorProps> = ({ docTitle, setDocTitle, isAuthenticated,
     return getNormalizedLineText(rawText);
   };
 
+  const isCaretAtPageEnd = (selection: Selection, page: HTMLDivElement) => {
+    if (!selection.rangeCount) return false;
+    const range = selection.getRangeAt(0);
+    if (!range.collapsed) return false;
+
+    const endRange = document.createRange();
+    endRange.selectNodeContents(page);
+    endRange.collapse(false);
+    return range.compareBoundaryPoints(Range.START_TO_START, endRange) === 0;
+  };
+
+  const isCaretAtPageStart = (selection: Selection, page: HTMLDivElement) => {
+    if (!selection.rangeCount) return false;
+    const range = selection.getRangeAt(0);
+    if (!range.collapsed) return false;
+
+    const startRange = document.createRange();
+    startRange.selectNodeContents(page);
+    startRange.collapse(true);
+    return range.compareBoundaryPoints(Range.START_TO_START, startRange) === 0;
+  };
+
+  const focusPageStart = (page: HTMLDivElement) => {
+    if (!page.firstChild) {
+      const emptyLine = document.createElement('div');
+      emptyLine.appendChild(document.createElement('br'));
+      page.appendChild(emptyLine);
+    }
+
+    const selection = window.getSelection();
+    if (!selection) return;
+    const range = document.createRange();
+    range.selectNodeContents(page);
+    range.collapse(true);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    page.focus();
+  };
+
+  const focusPageEnd = (page: HTMLDivElement) => {
+    if (!page.lastChild) {
+      const emptyLine = document.createElement('div');
+      emptyLine.appendChild(document.createElement('br'));
+      page.appendChild(emptyLine);
+    }
+
+    const selection = window.getSelection();
+    if (!selection) return;
+    const range = document.createRange();
+    range.selectNodeContents(page);
+    range.collapse(false);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    page.focus();
+  };
+
+  const moveInputToNextPage = (currentPage: HTMLDivElement, key: string) => {
+    const pages = getWritingPages();
+    const currentIndex = pages.indexOf(currentPage);
+    if (currentIndex === -1) return;
+
+    const placeInput = (targetPage: HTMLDivElement | null) => {
+      if (!targetPage) return;
+      focusPageStart(targetPage);
+      if (key === 'Enter') document.execCommand('insertParagraph');
+      else document.execCommand('insertText', false, key);
+      syncContent();
+      schedulePagination();
+    };
+
+    const nextPage = pages[currentIndex + 1] ?? null;
+    if (nextPage) {
+      placeInput(nextPage);
+      return;
+    }
+
+    appendPageAfter(currentPage);
+    requestAnimationFrame(() => {
+      const refreshedPages = getWritingPages();
+      placeInput(refreshedPages[currentIndex + 1] ?? null);
+    });
+  };
+
+  const moveCaretToPreviousPageEnd = (currentPage: HTMLDivElement) => {
+    const pages = getWritingPages();
+    const currentIndex = pages.indexOf(currentPage);
+    if (currentIndex <= 0) return false;
+
+    const previousPage = pages[currentIndex - 1] ?? null;
+    if (!previousPage) return false;
+
+    focusPageEnd(previousPage);
+    return true;
+  };
+
+  const moveDeletionToPreviousPage = (currentPage: HTMLDivElement) => {
+    const moved = moveCaretToPreviousPageEnd(currentPage);
+    if (!moved) return;
+    document.execCommand('delete');
+    syncContent();
+    schedulePagination();
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const selection = window.getSelection();
     const focusNode = selection && selection.rangeCount > 0 ? getElementFromNode(selection.getRangeAt(0).startContainer) : null;
@@ -913,6 +1019,44 @@ const Editor: React.FC<EditorProps> = ({ docTitle, setDocTitle, isAuthenticated,
       if (mathNode) {
         e.preventDefault();
         removeMathNode(mathNode, selection);
+        return;
+      }
+
+      const activePage = getActiveWritingPage(selection);
+      if (activePage && isPageEmpty(activePage)) {
+        const pages = getWritingPages();
+        if (pages.indexOf(activePage) > 0) {
+          e.preventDefault();
+          const moved = moveCaretToPreviousPageEnd(activePage);
+          if (moved) {
+            syncContent();
+            schedulePagination();
+          }
+          return;
+        }
+      }
+
+      if (
+        activePage &&
+        isCaretAtPageStart(selection, activePage) &&
+        (e.key === 'Backspace' || e.key === 'Delete')
+      ) {
+        const pages = getWritingPages();
+        if (pages.indexOf(activePage) > 0) {
+          e.preventDefault();
+          moveDeletionToPreviousPage(activePage);
+          return;
+        }
+      }
+    }
+
+    const isPlainCharacter = e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey;
+    const isPlainEnter = e.key === 'Enter' && !e.ctrlKey && !e.metaKey && !e.altKey;
+    if (selection && (isPlainCharacter || isPlainEnter)) {
+      const activePage = getActiveWritingPage(selection);
+      if (activePage && isCaretAtPageEnd(selection, activePage) && activePage.scrollHeight >= activePage.clientHeight) {
+        e.preventDefault();
+        moveInputToNextPage(activePage, e.key);
         return;
       }
     }

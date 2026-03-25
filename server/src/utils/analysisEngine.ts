@@ -180,7 +180,7 @@ export function analyzeSession(content: string, keystrokeData: KeystrokeData[], 
 
   return {
     reportId: crypto.randomUUID(),
-    verificationTag: 'Verified by Vi-Notes',
+    verificationTag: 'Verified by Soch',
     generatedAt: new Date().toISOString(),
     authenticityScore: Math.max(0, score),
     typingSpeed: Math.round(typingSpeed),
